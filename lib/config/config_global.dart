@@ -5,7 +5,7 @@ class ConfigGlobal {
   static const lupaPassword = false;
   static const login = true;
   static const register = true;
-  static const baseUrl = "http://192.168.98.33/task";
+  static const baseUrl = "http://192.168.228.33/task";
   static const jumlahDashboardGrid = 4;
 
   static String formatRupiah(dynamic number, {int decimalDigit = 0}) {

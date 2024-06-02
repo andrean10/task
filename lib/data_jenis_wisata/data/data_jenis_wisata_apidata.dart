@@ -30,14 +30,20 @@ class DataJenisWisataApiData implements DataHapus {
     String? nilai,
   }) {
     return DataJenisWisataApiData(
-      idJenisWisata: idJenisWisata?? this.idJenisWisata,
-      jenisWisata: jenisWisata?? this.jenisWisata,
-      nilai: nilai?? this.nilai,
+      idJenisWisata: idJenisWisata ?? this.idJenisWisata,
+      jenisWisata: jenisWisata ?? this.jenisWisata,
+      nilai: nilai ?? this.nilai,
     );
   }
 
   @override
   String getIdHapus() {
     return "$idJenisWisata";
+  }
+
+  // to string
+  @override
+  String toString() {
+    return 'DataJenisWisataApiData(idJenisWisata: $idJenisWisata, jenisWisata: $jenisWisata, nilai: $nilai)';
   }
 }

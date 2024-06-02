@@ -23,6 +23,7 @@ class _DataJenisWisataTampilSelectState
   @override
   Widget build(BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -59,86 +60,6 @@ class _DataJenisWisataTampilSelectState
                 //const PopupMenuItem<int>(value: 1, child: Text('Hapus')),
                 //],
                 //),
-                IconButton(
-                  icon: const Icon(Icons.edit_rounded),
-                  onPressed: () {
-                    showModalBottomSheet<DataJenisWisataApiData>(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (mycontext) {
-                        return Container(
-                          padding: EdgeInsets.only(
-                              bottom:
-                                  MediaQuery.of(mycontext).viewInsets.bottom),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 32,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                TextFormField(
-                                  controller: jenisWisataController,
-                                  textInputAction: TextInputAction.done,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                    decimal: true,
-                                  ),
-                                  decoration: const InputDecoration(
-                                    labelText: "Bobot",
-                                    hintText: "Masukkan Bobot",
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return "Bobot tidak boleh kosong";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      if (jenisWisataController.text
-                                          .contains(',')) {
-                                        jenisWisataController.text =
-                                            jenisWisataController.text
-                                                .replaceAll(',', '.');
-                                      }
-
-                                      final newData = widget.data.copyWith(
-                                        nilai: jenisWisataController.value.text,
-                                      );
-
-                                      final bloc = context
-                                          .read<DataJenisWisataUbahBloc>();
-                                      bloc.add(
-                                        FetchDataJenisWisataUbah(
-                                          DataJenisWisata(
-                                            idJenisWisata:
-                                                newData.idJenisWisata,
-                                            nilai: newData.nilai,
-                                          ),
-                                        ),
-                                      );
-
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Simpan'),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
                 IconButton(
                   onPressed: () {
                     final newData = widget.data.copyWith(

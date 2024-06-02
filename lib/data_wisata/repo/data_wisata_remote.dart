@@ -5,7 +5,6 @@ import 'package:recomend_toba/data_wisata/data/data_wisata_api.dart';
 import 'package:recomend_toba/data_wisata/data/data_wisata_result_api.dart';
 import 'package:recomend_toba/data_wisata/repo/data_wisata_api_service.dart';
 import 'package:recomend_toba/data_wisata/data/data_wisata.dart';
-import 'package:recomend_toba/home/pencarian_wisata_screen.dart';
 
 class DataWisataRemote {
   final DataWisataApiService _serviceApi = DataWisataApiService();

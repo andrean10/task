@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:recomend_toba/data/data_filter.dart';
 
 class FilterPencarian extends DataFilter {
@@ -11,17 +12,17 @@ class FilterPencarian extends DataFilter {
   final String idPeserta;
 
   String? idJenisWisata = "";
-  String? bobotJenisWisata = "";
+  // String? bobotJenisWisata = "";
   String? idWilayah = "";
-  String? bobotWilayah = "";
+  // String? bobotWilayah = "";
   String? idRating = "";
-  String? bobotRating = "";
+  // String? bobotRating = "";
   String? idHargaTiket = "";
-  String? bobotHargaTiket = "";
+  // String? bobotHargaTiket = "";
   String? idHariOperasional = "";
-  String? bobotHariOperasional = "";
+  // String? bobotHariOperasional = "";
   String? idJamOperasional = "";
-  String? bobotJamOperasional = "";
+  // String? bobotJamOperasional = "";
 
   String? jenisWisata = "";
   String? wilayah = "";
@@ -39,12 +40,12 @@ class FilterPencarian extends DataFilter {
     this.sampai = "",
     this.auth = "",
     this.idPeserta = "",
-    this.bobotJenisWisata,
-    this.bobotWilayah,
-    this.bobotRating,
-    this.bobotHargaTiket,
-    this.bobotHariOperasional,
-    this.bobotJamOperasional,
+    this.idJenisWisata,
+    this.idWilayah,
+    this.idRating,
+    this.idHargaTiket,
+    this.idHariOperasional,
+    this.idJamOperasional,
   });
 
   // copy with
@@ -57,14 +58,14 @@ class FilterPencarian extends DataFilter {
     String? sampai,
     String? auth,
     String? idPeserta,
-    String? bobotJenisWisata,
-    String? bobotWilayah,
-    String? bobotRating,
-    String? bobotHargaTiket,
-    String? bobotHariOperasional,
-    String? bobotJamOperasional,
+    String? idJenisWisata,
+    String? idWilayah,
+    String? idRating,
+    String? idHargaTiket,
+    String? idHariOperasional,
+    String? idJamOperasional,
   }) {
-    return FilterPencarian(
+    final data = FilterPencarian(
       berdasarkan: berdasarkan ?? this.berdasarkan,
       isi: isi ?? this.isi,
       limit: limit ?? this.limit,
@@ -73,18 +74,19 @@ class FilterPencarian extends DataFilter {
       sampai: sampai ?? this.sampai,
       auth: auth ?? this.auth,
       idPeserta: idPeserta ?? this.idPeserta,
-      bobotJenisWisata: bobotJenisWisata ?? this.bobotJenisWisata,
-      bobotWilayah: bobotWilayah ?? this.bobotWilayah,
-      bobotRating: bobotRating ?? this.bobotRating,
-      bobotHargaTiket: bobotHargaTiket ?? this.bobotHargaTiket,
-      bobotHariOperasional: bobotHariOperasional ?? this.bobotHariOperasional,
-      bobotJamOperasional: bobotJamOperasional ?? this.bobotJamOperasional,
+      idJenisWisata: idJenisWisata ?? this.idJenisWisata,
+      idWilayah: idWilayah ?? this.idWilayah,
+      idRating: idRating ?? this.idRating,
+      idHargaTiket: idHargaTiket ?? this.idHargaTiket,
+      idHariOperasional: idHariOperasional ?? this.idHariOperasional,
+      idJamOperasional: idJamOperasional ?? this.idJamOperasional,
     );
+    return data;
   }
 
   // toString
   @override
   String toString() {
-    return "FilterPencarian(berdasarkan: $berdasarkan, isi: $isi, limit: $limit, hal: $hal, dari: $dari, sampai: $sampai, auth: $auth, idPeserta: $idPeserta, bobotJenisWisata: $bobotJenisWisata, bobotWilayah: $bobotWilayah, bobotRating: $bobotRating, bobotHargaTiket: $bobotHargaTiket, bobotHariOperasional: $bobotHariOperasional, bobotJamOperasional: $bobotJamOperasional)";
+    return 'FilterPencarian(berdasarkan: $berdasarkan, isi: $isi, limit: $limit, hal: $hal, dari: $dari, sampai: $sampai, auth: $auth, idPeserta: $idPeserta, idJenisWisata: $idJenisWisata, idWilayah: $idWilayah, idRating: $idRating, idHargaTiket: $idHargaTiket, idHariOperasional: $idHariOperasional, idJamOperasional: $idJamOperasional)';
   }
 }

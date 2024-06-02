@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:recomend_toba/config/config_global.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:recomend_toba/data/data_filter.dart';
 import 'package:recomend_toba/data_harga_tiket/data/data_harga_tiket_apidata.dart';
 import 'package:recomend_toba/data_harga_tiket/data_harga_tiket_screen.dart';
 import 'package:recomend_toba/data_hari_operasional/data/data_hari_operasional_apidata.dart';
@@ -22,13 +22,11 @@ import 'package:recomend_toba/data_wisata/bloc/data_wisata_simpan_bloc.dart';
 import 'package:recomend_toba/data_wisata/bloc/data_wisata_ubah_bloc.dart';
 import 'package:recomend_toba/data_wisata/data/data_wisata.dart';
 import 'package:recomend_toba/data_wisata/data/data_wisata_apidata.dart';
-import 'package:recomend_toba/data_wisata/data_wisata_tambah.dart';
 // import 'package:recomend_toba/data_wisata/data_wisata_tampil.dart';
 import 'package:recomend_toba/data_wisata/data_wisata_ubah.dart';
 import 'package:recomend_toba/home/filter_pencarian.dart';
 import 'package:recomend_toba/home/rekomendasi_wisata_tampil.dart';
 import 'package:recomend_toba/widgets/loading_widget.dart';
-import 'package:recomend_toba/widgets/tombol.dart';
 import 'package:recomend_toba/config/config_session_manager.dart';
 
 class RekomendasiWisataScreen extends StatefulWidget {
@@ -42,7 +40,7 @@ class RekomendasiWisataScreen extends StatefulWidget {
 }
 
 class _RekomendasiWisataScreenState extends State<RekomendasiWisataScreen> {
-  FilterPencarian filter = FilterPencarian();
+  final filter = FilterPencarian();
 
   List<Map<String, dynamic>> listPencarian = [
     // {"key": "id_wisata", "value": "Id Wisata"},
@@ -78,34 +76,37 @@ class _RekomendasiWisataScreenState extends State<RekomendasiWisataScreen> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  final logger = Logger();
+
   @override
   void initState() {
-    bobotJenisWisataController.addListener(() {
-      filter.bobotJenisWisata = bobotJenisWisataController.text;
+    jenisWisataController.addListener(() {
+      // filter.bobotJenisWisata = bobotJenisWisataController.text;
     });
 
     bobotWilayahController.addListener(() {
-      filter.bobotWilayah = bobotWilayahController.text;
+      // filter.bobotWilayah = bobotWilayahController.text;
     });
 
     bobotRatingController.addListener(() {
-      filter.bobotRating = bobotRatingController.text;
+      // filter.bobotRating = bobotRatingController.text;
     });
 
     bobotHargaTiketController.addListener(() {
-      filter.bobotHargaTiket = bobotHargaTiketController.text;
+      // filter.bobotHargaTiket = bobotHargaTiketController.text;
     });
 
     bobotHariOperasionalController.addListener(() {
-      filter.bobotHariOperasional = bobotHariOperasionalController.text;
+      // filter.bobotHariOperasional = bobotHariOperasionalController.text;
     });
 
     bobotJamOperasionalController.addListener(() {
-      filter.bobotJamOperasional = bobotJamOperasionalController.text;
+      // filter.bobotJamOperasional = bobotJamOperasionalController.text;
     });
 
     super.initState();
     getSession();
+    fetchData();
   }
 
   @override
@@ -204,6 +205,10 @@ class _RekomendasiWisataScreenState extends State<RekomendasiWisataScreen> {
                                 var data = await Navigator.of(context)
                                     .pushNamed(DataJenisWisataScreen.routeName);
                                 if (data is DataJenisWisataApiData) {
+                                  filter.idJenisWisata = data.idJenisWisata;
+                                  logger.d(
+                                      'debug: filter = ${filter.toString()}');
+
                                   jenisWisataController.text =
                                       "${data.jenisWisata}";
                                   bobotJenisWisataController.text =
@@ -234,144 +239,153 @@ class _RekomendasiWisataScreenState extends State<RekomendasiWisataScreen> {
                                 var data = await Navigator.of(context)
                                     .pushNamed(DataWilayahScreen.routeName);
                                 if (data is DataWilayahApiData) {
+                                  filter.idWilayah = data.idWilayah;
+                                  logger.d(
+                                      'debug: filter = ${filter.toString()}');
                                   wilayahController.text = "${data.wilayah}";
                                   bobotWilayahController.text = "${data.nilai}";
                                 }
                               },
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.0,
-                            ),
-                            child: TextFormField(
-                              readOnly: true,
-                              decoration: const InputDecoration(
-                                suffixIcon: Icon(Icons.keyboard_arrow_down),
-                                border: OutlineInputBorder(),
-                                labelText: 'Rating',
-                              ),
-                              controller: ratingController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Rating tidak boleh kosong';
-                                }
-                                return null;
-                              },
-                              onTap: () async {
-                                var data = await Navigator.of(context)
-                                    .pushNamed(DataRatingScreen.routeName);
-                                if (data is DataRatingApiData) {
-                                  ratingController.text = "${data.rating}";
-                                  bobotRatingController.text = "${data.nilai}";
-                                }
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.0,
-                            ),
-                            child: TextFormField(
-                              readOnly: true,
-                              decoration: const InputDecoration(
-                                suffixIcon: Icon(Icons.keyboard_arrow_down),
-                                border: OutlineInputBorder(),
-                                labelText: 'Harga Tiket',
-                              ),
-                              controller: hargaTiketController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Harga Tiket tidak boleh kosong';
-                                }
-                                return null;
-                              },
-                              onTap: () async {
-                                var data = await Navigator.of(context)
-                                    .pushNamed(DataHargaTiketScreen.routeName);
-                                if (data is DataHargaTiketApiData) {
-                                  hargaTiketController.text =
-                                      "${data.hargaTiket}";
-                                  bobotHargaTiketController.text =
-                                      "${data.nilai}";
-                                }
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.0,
-                            ),
-                            child: TextFormField(
-                              readOnly: true,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Hari Operasional',
-                                suffixIcon: Icon(Icons.keyboard_arrow_down),
-                              ),
-                              controller: hariOperasionalController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Hari Operasional tidak boleh kosong';
-                                }
-                                return null;
-                              },
-                              onTap: () async {
-                                var data = await Navigator.of(context)
-                                    .pushNamed(
-                                        DataHariOperasionalScreen.routeName);
-                                if (data is DataHariOperasionalApiData) {
-                                  hariOperasionalController.text =
-                                      "${data.hariOperasional}";
-                                  bobotHariOperasionalController.text =
-                                      "${data.nilai}";
-                                }
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.0,
-                            ),
-                            child: TextFormField(
-                              readOnly: true,
-                              decoration: const InputDecoration(
-                                suffixIcon: Icon(Icons.keyboard_arrow_down),
-                                border: OutlineInputBorder(),
-                                labelText: 'Jam Operasional',
-                              ),
-                              controller: jamOperasionalController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Jam Operasional tidak boleh kosong';
-                                }
-                                return null;
-                              },
-                              onTap: () async {
-                                var data = await Navigator.of(context)
-                                    .pushNamed(
-                                        DataJamOperasionalScreen.routeName);
-                                if (data is DataJamOperasionalApiData) {
-                                  jamOperasionalController.text =
-                                      "${data.jamOperasional}";
-                                  bobotJamOperasionalController.text =
-                                      "${data.nilai}";
-                                }
-                              },
-                            ),
-                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(
+                          //     top: 8.0,
+                          //   ),
+                          //   child: TextFormField(
+                          //     readOnly: true,
+                          //     decoration: const InputDecoration(
+                          //       suffixIcon: Icon(Icons.keyboard_arrow_down),
+                          //       border: OutlineInputBorder(),
+                          //       labelText: 'Rating',
+                          //     ),
+                          //     controller: ratingController,
+                          //     validator: (value) {
+                          //       if (value == null || value.isEmpty) {
+                          //         return 'Rating tidak boleh kosong';
+                          //       }
+                          //       return null;
+                          //     },
+                          //     onTap: () async {
+                          //       var data = await Navigator.of(context)
+                          //           .pushNamed(DataRatingScreen.routeName);
+                          //       if (data is DataRatingApiData) {
+                          //         filter.idRating = data.idRating;
+                          //         logger.d(
+                          //             'debug: filter = ${filter.toString()}');
+                          //         ratingController.text = "${data.rating}";
+                          //         bobotRatingController.text = "${data.nilai}";
+                          //       }
+                          //     },
+                          //   ),
+                          // ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(
+                          //     top: 8.0,
+                          //   ),
+                          //   child: TextFormField(
+                          //     readOnly: true,
+                          //     decoration: const InputDecoration(
+                          //       suffixIcon: Icon(Icons.keyboard_arrow_down),
+                          //       border: OutlineInputBorder(),
+                          //       labelText: 'Harga Tiket',
+                          //     ),
+                          //     controller: hargaTiketController,
+                          //     validator: (value) {
+                          //       if (value == null || value.isEmpty) {
+                          //         return 'Harga Tiket tidak boleh kosong';
+                          //       }
+                          //       return null;
+                          //     },
+                          //     onTap: () async {
+                          //       var data = await Navigator.of(context)
+                          //           .pushNamed(DataHargaTiketScreen.routeName);
+                          //       if (data is DataHargaTiketApiData) {
+                          //         filter.idHargaTiket = data.idHargaTiket;
+                          //         logger.d('debug: filter = $filter');
+                          //         hargaTiketController.text =
+                          //             "${data.hargaTiket}";
+                          //         bobotHargaTiketController.text =
+                          //             "${data.nilai}";
+                          //       }
+                          //     },
+                          //   ),
+                          // ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(
+                          //     top: 8.0,
+                          //   ),
+                          //   child: TextFormField(
+                          //     readOnly: true,
+                          //     decoration: const InputDecoration(
+                          //       border: OutlineInputBorder(),
+                          //       labelText: 'Hari Operasional',
+                          //       suffixIcon: Icon(Icons.keyboard_arrow_down),
+                          //     ),
+                          //     controller: hariOperasionalController,
+                          //     validator: (value) {
+                          //       if (value == null || value.isEmpty) {
+                          //         return 'Hari Operasional tidak boleh kosong';
+                          //       }
+                          //       return null;
+                          //     },
+                          //     onTap: () async {
+                          //       var data = await Navigator.of(context)
+                          //           .pushNamed(
+                          //               DataHariOperasionalScreen.routeName);
+                          //       if (data is DataHariOperasionalApiData) {
+                          //         filter.idHariOperasional =
+                          //             data.idHariOperasional;
+                          //         logger.d('debug: filter = $filter');
+                          //         hariOperasionalController.text =
+                          //             "${data.hariOperasional}";
+                          //         bobotHariOperasionalController.text =
+                          //             "${data.nilai}";
+                          //       }
+                          //     },
+                          //   ),
+                          // ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(
+                          //     top: 8.0,
+                          //   ),
+                          //   child: TextFormField(
+                          //     readOnly: true,
+                          //     decoration: const InputDecoration(
+                          //       suffixIcon: Icon(Icons.keyboard_arrow_down),
+                          //       border: OutlineInputBorder(),
+                          //       labelText: 'Jam Operasional',
+                          //     ),
+                          //     controller: jamOperasionalController,
+                          //     validator: (value) {
+                          //       if (value == null || value.isEmpty) {
+                          //         return 'Jam Operasional tidak boleh kosong';
+                          //       }
+                          //       return null;
+                          //     },
+                          //     onTap: () async {
+                          //       var data = await Navigator.of(context)
+                          //           .pushNamed(
+                          //               DataJamOperasionalScreen.routeName);
+                          //       if (data is DataJamOperasionalApiData) {
+                          //         filter.idJamOperasional =
+                          //             data.idJamOperasional;
+                          //         logger.d('debug: filter = $filter');
+                          //         jamOperasionalController.text =
+                          //             "${data.jamOperasional}";
+                          //         bobotJamOperasionalController.text =
+                          //             "${data.nilai}";
+                          //       }
+                          //     },
+                          //   ),
+                          // ),
                         ],
                       ),
-
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              debugPrint(
-                                  'debug: filter from fetch Data = ${filter.toString()}');
-                              fetchData();
-                            }
+                            fetchData();
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -571,170 +585,170 @@ class _RekomendasiWisataScreenState extends State<RekomendasiWisataScreen> {
     );
   }
 
-  Future<void> _showPencarianDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) => AlertDialog(
-            title: const Text('Pencarian'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: [
-                  DropdownButtonFormField<String>(
-                    isExpanded: true, // biar nggak error overflow
-                    value: valuePencarian,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
-                        ),
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                      filled: true,
-                    ),
-                    onChanged: (String? value) {
-                      setState(() {
-                        valuePencarian = value!;
-                      });
-                    },
-                    items: listPencarian.map((Map<String, dynamic> item) {
-                      return DropdownMenuItem<String>(
-                        value: item["key"],
-                        child: Text(
-                          item["value"],
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 15),
-                  Builder(builder: (context) {
-                    if (isPencarianTanggal(valuePencarian)) {
-                      return TextFormField(
-                        controller: waktuController,
-                        readOnly: true,
-                        onTap: () {
-                          showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1990, 1),
-                            lastDate: DateTime(2025, 12),
-                          ).then((pickedDate) {
-                            if (pickedDate != null) {
-                              waktuController.text =
-                                  DateFormat('y-M-d').format(pickedDate);
-                            }
-                          });
-                        },
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.book),
-                          labelText: 'Waktu ',
-                          labelStyle: const TextStyle(color: Colors.black),
-                          fillColor: Colors.white,
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.black, width: 1.0),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.black, width: 2.0),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 15.0,
-                            horizontal: 10.0,
-                          ),
-                          errorStyle: const TextStyle(
-                            color: Colors.red,
-                          ), // Warna teks error
-                          errorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                            ), // Border saat ada error
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 2.0), // Border saat fokus dengan error
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        validator: (value) {
-                          // if (value == null || value.isEmpty) {
-                          //   return 'Harus diisi!';
-                          // }
-                          return null;
-                        },
-                      );
-                    }
-                    return TextFormField(
-                      controller: pencarianController,
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        hintText: 'Cari disini',
-                        border: OutlineInputBorder(),
-                      ),
-                    );
-                  }),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        child: const Text('Cari'),
-                        onPressed: () {
-                          if (isPencarianTanggal(valuePencarian)) {
-                            filter = filter.copyWith(
-                              berdasarkan: valuePencarian,
-                              isi: waktuController.text,
-                            );
-                          } else {
-                            filter = filter.copyWith(
-                              berdasarkan: valuePencarian,
-                              isi: pencarianController.text,
-                            );
-                          }
+  // Future<void> _showPencarianDialog() async {
+  //   return showDialog<void>(
+  //     context: context,
+  //     barrierDismissible: false, // user must tap button!
+  //     builder: (BuildContext context) {
+  //       return StatefulBuilder(
+  //         builder: (context, setState) => AlertDialog(
+  //           title: const Text('Pencarian'),
+  //           content: SingleChildScrollView(
+  //             child: ListBody(
+  //               children: [
+  //                 DropdownButtonFormField<String>(
+  //                   isExpanded: true, // biar nggak error overflow
+  //                   value: valuePencarian,
+  //                   decoration: const InputDecoration(
+  //                     isDense: true,
+  //                     fillColor: Colors.white,
+  //                     border: OutlineInputBorder(),
+  //                     focusedBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(5.0),
+  //                       ),
+  //                       borderSide: BorderSide(color: Colors.blue),
+  //                     ),
+  //                     filled: true,
+  //                   ),
+  //                   onChanged: (String? value) {
+  //                     setState(() {
+  //                       valuePencarian = value!;
+  //                     });
+  //                   },
+  //                   items: listPencarian.map((Map<String, dynamic> item) {
+  //                     return DropdownMenuItem<String>(
+  //                       value: item["key"],
+  //                       child: Text(
+  //                         item["value"],
+  //                         style: const TextStyle(color: Colors.black),
+  //                       ),
+  //                     );
+  //                   }).toList(),
+  //                 ),
+  //                 const SizedBox(height: 15),
+  //                 Builder(builder: (context) {
+  //                   if (isPencarianTanggal(valuePencarian)) {
+  //                     return TextFormField(
+  //                       controller: waktuController,
+  //                       readOnly: true,
+  //                       onTap: () {
+  //                         showDatePicker(
+  //                           context: context,
+  //                           initialDate: DateTime.now(),
+  //                           firstDate: DateTime(1990, 1),
+  //                           lastDate: DateTime(2025, 12),
+  //                         ).then((pickedDate) {
+  //                           if (pickedDate != null) {
+  //                             waktuController.text =
+  //                                 DateFormat('y-M-d').format(pickedDate);
+  //                           }
+  //                         });
+  //                       },
+  //                       decoration: InputDecoration(
+  //                         prefixIcon: const Icon(Icons.book),
+  //                         labelText: 'Waktu ',
+  //                         labelStyle: const TextStyle(color: Colors.black),
+  //                         fillColor: Colors.white,
+  //                         filled: true,
+  //                         enabledBorder: OutlineInputBorder(
+  //                           borderSide: const BorderSide(
+  //                               color: Colors.black, width: 1.0),
+  //                           borderRadius: BorderRadius.circular(10.0),
+  //                         ),
+  //                         focusedBorder: OutlineInputBorder(
+  //                           borderSide: const BorderSide(
+  //                               color: Colors.black, width: 2.0),
+  //                           borderRadius: BorderRadius.circular(10.0),
+  //                         ),
+  //                         contentPadding: const EdgeInsets.symmetric(
+  //                           vertical: 15.0,
+  //                           horizontal: 10.0,
+  //                         ),
+  //                         errorStyle: const TextStyle(
+  //                           color: Colors.red,
+  //                         ), // Warna teks error
+  //                         errorBorder: OutlineInputBorder(
+  //                           borderSide: const BorderSide(
+  //                             color: Colors.red,
+  //                           ), // Border saat ada error
+  //                           borderRadius: BorderRadius.circular(10.0),
+  //                         ),
+  //                         focusedErrorBorder: OutlineInputBorder(
+  //                           borderSide: const BorderSide(
+  //                               color: Colors.red,
+  //                               width: 2.0), // Border saat fokus dengan error
+  //                           borderRadius: BorderRadius.circular(10.0),
+  //                         ),
+  //                       ),
+  //                       validator: (value) {
+  //                         // if (value == null || value.isEmpty) {
+  //                         //   return 'Harus diisi!';
+  //                         // }
+  //                         return null;
+  //                       },
+  //                     );
+  //                   }
+  //                   return TextFormField(
+  //                     controller: pencarianController,
+  //                     decoration: const InputDecoration(
+  //                       isDense: true,
+  //                       hintText: 'Cari disini',
+  //                       border: OutlineInputBorder(),
+  //                     ),
+  //                   );
+  //                 }),
+  //                 Row(
+  //                   mainAxisAlignment: MainAxisAlignment.end,
+  //                   children: [
+  //                     TextButton(
+  //                       child: const Text('Cari'),
+  //                       onPressed: () {
+  //                         if (isPencarianTanggal(valuePencarian)) {
+  //                           filter = filter.copyWith(
+  //                             berdasarkan: valuePencarian,
+  //                             isi: waktuController.text,
+  //                           );
+  //                         } else {
+  //                           filter = filter.copyWith(
+  //                             berdasarkan: valuePencarian,
+  //                             isi: pencarianController.text,
+  //                           );
+  //                         }
 
-                          /* filter = filter.copyWith(
-                            berdasarkan: valuePencarian,
-                            isi: pencarianController.text,
-                          ); */
+  //                         /* filter = filter.copyWith(
+  //                           berdasarkan: valuePencarian,
+  //                           isi: pencarianController.text,
+  //                         ); */
 
-                          fetchData();
+  //                         fetchData();
 
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      TextButton(
-                        child: const Text('Batal'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //                         Navigator.of(context).pop();
+  //                       },
+  //                     ),
+  //                     TextButton(
+  //                       child: const Text('Batal'),
+  //                       onPressed: () {
+  //                         Navigator.of(context).pop();
+  //                       },
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   void getSession() async {
     var session = await ConfigSessionManager.getInstance().getData();
     if (session == null) {
       return;
     }
-    filter = FilterPencarian(idPeserta: "${session.id}");
+    // filter = FilterPencarian(idPeserta: "${session.id}");
     // fetchData();
   }
 
@@ -757,8 +771,6 @@ class _RekomendasiWisataScreenState extends State<RekomendasiWisataScreen> {
   }
 
   void fetchData() async {
-    debugPrint('filter fetchData = ${filter.toString()}');
-
     BlocProvider.of<DataWisataBloc>(context).add(
       FetchRekomendasiWisata(filter),
     );

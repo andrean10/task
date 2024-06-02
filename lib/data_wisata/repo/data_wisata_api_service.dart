@@ -77,10 +77,10 @@ class DataWisataApiService {
           'sampai': filter.sampai,
           'id_jenis_wisata': filter.idJenisWisata,
           'id_wilayah': filter.idWilayah,
-          'id_rating': filter.idRating,
-          'id_harga_tiket': filter.idHargaTiket,
-          'id_hari_operasional': filter.idHariOperasional,
-          'id_jam_operasional': filter.idJamOperasional,
+          // 'id_rating': filter.idRating,
+          // 'id_harga_tiket': filter.idHargaTiket,
+          // 'id_hari_operasional': filter.idHariOperasional,
+          // 'id_jam_operasional': filter.idJamOperasional,
           // '': filter.jenisWisata,
           // '': filter.wilayah,
           // '': filter.rating,
@@ -99,37 +99,41 @@ class DataWisataApiService {
   }
 
   Future<DataWisataApi> getRekomendasi(FilterPencarian filter) async {
+    debugPrint('debug: filter from getRekomendasi = $filter');
+
     var _dio = await dio;
     try {
       Response response = await _dio.get(
         "app/page/data_wisata/proses_moora.php",
-        // data: FormData.fromMap({
-        // 'berdasarkan': filter.berdasarkan,
-        // 'isi': filter.isi,
-        // 'limit': filter.limit,
-        // 'hal': filter.hal,
-        // 'dari': filter.dari,
-        // 'sampai': filter.sampai,
-        // 'id_jenis_wisata': filter.idJenisWisata,
-        // 'id_wilayah': filter.idWilayah,
-        // 'id_rating': filter.idRating,
-        // 'id_harga_tiket': filter.idHargaTiket,
-        // 'id_hari_operasional': filter.idHariOperasional,
-        // 'id_jam_operasional': filter.idJamOperasional,
-        // '': filter.jenisWisata,
-        // '': filter.wilayah,
-        // '': filter.rating,
-        // '': filter.hargaTiket,
-        // '': filter.hariOperasional,
-        // '': filter.jamOperasional,
-        // 'bobot_jenis_wisata': filter.bobotJenisWisata,
-        // 'bobot_wilayah': filter.bobotWilayah,
-        // 'bobot_rating': filter.bobotRating,
-        // 'bobot_harga_tiket': filter.bobotHargaTiket,
-        // 'bobot_hari_operasional': filter.bobotHariOperasional,
-        // 'bobot_jam_operasional': filter.bobotJamOperasional,
-        // }),
+        queryParameters: (filter.idJenisWisata != null && filter.idWilayah != null) ? {
+          // 'berdasarkan': filter.berdasarkan,
+          // 'isi': filter.isi,
+          // 'limit': filter.limit,
+          // 'hal': filter.hal,
+          // 'dari': filter.dari,
+          // 'sampai': filter.sampai,
+          'id_jenis_wisata': filter.idJenisWisata,
+          'id_wilayah': filter.idWilayah,
+          // '': filter.jenisWisata,
+          // '': filter.wilayah,
+          // '': filter.rating,
+          // '': filter.hargaTiket,
+          // '': filter.hariOperasional,
+          // '': filter.jamOperasional,
+          // 'bobot_jenis_wisata': filter.bobotJenisWisata,
+          // 'bobot_wilayah': filter.bobotWilayah,
+          // 'bobot_rating': filter.bobotRating,
+          // 'bobot_harga_tiket': filter.bobotHargaTiket,
+          // 'bobot_hari_operasional': filter.bobotHariOperasional,
+          // 'bobot_jam_operasional': filter.bobotJamOperasional,
+        } : (filter.idJenisWisata != null) ? {
+          'id_jenis_wisata': filter.idJenisWisata,
+        } : (filter.idWilayah != null) ? {
+          'id_jenis_wisata': filter.idJenisWisata,
+          'id_wilayah': filter.idWilayah,
+        } : null,
       );
+  
       if (response.data is String) {
         return DataWisataApi.fromJson(jsonDecode(response.data));
       }
